@@ -1,0 +1,163 @@
+{
+  "name": "wadokei-face",
+  "author": "toyon",
+  "version": "1.0.0",
+  "keywords": [
+    "pebble-app"
+  ],
+  "private": true,
+  "pebble": {
+    "displayName": "Wadokei",
+    "uuid": "0e6a7f95-502e-4972-9caa-fe334cd2b95b",
+    "sdkVersion": "3",
+    "enableMultiJS": true,
+    "targetPlatforms": [
+      "basalt",
+      "chalk",
+      "diorite",
+      "emery",
+      "flint",
+      "gabbro"
+    ],
+    "watchapp": {
+      "watchface": true
+    },
+    "capabilities": [
+      "configurable",
+      "location"
+    ],
+    "messageKeys": [
+      "LATITUDE",
+      "LONGITUDE",
+      "BASIS",
+        "TIMEZONE"
+    ],
+    "resources": {
+      "media": [
+        {
+          "type": "bitmap",
+          "name": "IMAGE_MENU_ICON",
+          "file": "images/menu_icon.png",
+          "menuIcon": true
+        },
+        {
+          "type": "font",
+          "name": "JP_14",
+          "file": "fonts/BIZUDPGothic-Regular.ttf",
+          "characterRegex": "[0-9:/ 一四五六七八九子丑寅卯辰巳午未申酉戌亥の刻分半昼夜月火水木金土日曜]",
+          "targetPlatforms": [
+            "basalt",
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "name": "BRUSH_24",
+          "file": "fonts/brush-kaisho.ttf",
+          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半]",
+          "targetPlatforms": [
+            "basalt",
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "name": "BRUSH_18",
+          "file": "fonts/brush-kaisho.ttf",
+          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半]",
+          "targetPlatforms": [
+            "basalt",
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "name": "JP_16",
+          "file": "fonts/BIZUDPGothic-Regular.ttf",
+          "characterRegex": "[0-9:/ 一四五六七八九子丑寅卯辰巳午未申酉戌亥の刻分半昼夜月火水木金土日曜]",
+          "targetPlatforms": [
+            "chalk"
+          ]
+        },
+        {
+          "type": "font",
+          "name": "BRUSH_28",
+          "file": "fonts/brush-kaisho.ttf",
+          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半]",
+          "targetPlatforms": [
+            "chalk"
+          ]
+        },
+        {
+          "type": "font",
+          "name": "BRUSH_22",
+          "file": "fonts/brush-kaisho.ttf",
+          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半]",
+          "targetPlatforms": [
+            "chalk"
+          ]
+        },
+        {
+          "type": "font",
+          "name": "JP_18",
+          "file": "fonts/BIZUDPGothic-Regular.ttf",
+          "characterRegex": "[0-9:/ 一四五六七八九子丑寅卯辰巳午未申酉戌亥の刻分半昼夜月火水木金土日曜]",
+          "targetPlatforms": [
+            "emery"
+          ]
+        },
+        {
+          "type": "font",
+          "name": "BRUSH_32",
+          "file": "fonts/brush-kaisho.ttf",
+          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半]",
+          "targetPlatforms": [
+            "emery"
+          ]
+        },
+        {
+          "type": "font",
+          "name": "BRUSH_26",
+          "file": "fonts/brush-kaisho.ttf",
+          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半]",
+          "targetPlatforms": [
+            "emery"
+          ]
+        },
+        {
+          "type": "font",
+          "name": "JP_22",
+          "file": "fonts/BIZUDPGothic-Regular.ttf",
+          "characterRegex": "[0-9:/ 一四五六七八九子丑寅卯辰巳午未申酉戌亥の刻分半昼夜月火水木金土日曜]",
+          "targetPlatforms": [
+            "gabbro"
+          ]
+        },
+        {
+          "type": "font",
+          "name": "BRUSH_40",
+          "file": "fonts/brush-kaisho.ttf",
+          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半]",
+          "targetPlatforms": [
+            "gabbro"
+          ]
+        },
+        {
+          "type": "font",
+          "name": "BRUSH_30",
+          "file": "fonts/brush-kaisho.ttf",
+          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半]",
+          "targetPlatforms": [
+            "gabbro"
+          ]
+        }
+      ]
+    }
+  },
+  "dependencies": {
+    "@rebble/clay": "^1.1.0"
+  }
+}
