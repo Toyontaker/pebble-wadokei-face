@@ -7,18 +7,21 @@ p=$1; out=$2; work=$3
 sdk=$HOME/.pebble-sdk/SDKs/current/sdk-core/pebble/$p/qemu
 mkdir -p "$work"
 bzcat "$sdk/qemu_spi_flash.bin.bz2" > "$work/$p.bin"
+# SDK 4.33 以降の qemu-pebble（7 以降）に合わせた引数（pebble-tool の sdk/emulator.py と同じ）
+spi="-drive if=none,id=spi-flash,file=$work/$p.bin,format=raw"
 case $p in
-  basalt)  m="-machine pebble-snowy-bb -cpu cortex-m4 -pflash" ;;
-  chalk)   m="-machine pebble-s4-bb -cpu cortex-m4 -pflash" ;;
-  emery)   m="-machine pebble-snowy-emery-bb -cpu cortex-m4 -pflash" ;;
-  gabbro)  m="-machine pebble-spalding-gabbro-bb -cpu cortex-m4 -pflash" ;;
-  diorite|flint) m="-machine pebble-silk-bb -cpu cortex-m4 -mtdblock" ;;
+  basalt)  m="-machine pebble-snowy-bb -cpu cortex-m4 $spi" ;;
+  chalk)   m="-machine pebble-s4-bb -cpu cortex-m4 $spi" ;;
+  diorite) m="-machine pebble-silk-bb -cpu cortex-m4 -mtdblock $work/$p.bin" ;;
+  emery)   m="-machine pebble-emery -cpu cortex-m33 -drive if=mtd,format=raw,file=$work/$p.bin -audio driver=none,id=audio0" ;;
+  flint)   m="-machine pebble-flint -cpu cortex-m4 -drive if=mtd,format=raw,file=$work/$p.bin -audio driver=none,id=audio0" ;;
+  gabbro)  m="-machine pebble-gabbro -cpu cortex-m33 -drive if=mtd,format=raw,file=$work/$p.bin -audio driver=none,id=audio0" ;;
 esac
 PATH=$HOME/.pebble-sdk/SDKs/current/toolchain/bin:$PATH
 port=$((20000 + $$ % 20000))
-qemu-pebble -rtc base=localtime -serial null -serial tcp::$port,server,nowait \
-  -serial tcp::$((port+1)),server,nowait -pflash "$sdk/qemu_micro_flash.bin" \
-  -display none $m "$work/$p.bin" >"$work/$p.qemu.log" 2>&1 &
+qemu-pebble -rtc base=localtime -serial null -serial tcp::$port,server=on,wait=off \
+  -serial tcp::$((port+1)),server=on,wait=off -kernel "$sdk/qemu_micro_flash.bin" \
+  -display none $m >"$work/$p.qemu.log" 2>&1 &
 qpid=$!
 ok=0
 for i in $(seq 1 30); do

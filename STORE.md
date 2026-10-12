@@ -25,7 +25,7 @@ A Japanese temporal-hour watchface: day and night are each split into six, so th
 
 一刻の長さは季節によって伸び縮みします。東京では夏至の昼の一刻が約2時間26分、夜は約1時間34分。冬至になると昼が約1時間37分、夜が約2時間23分と逆転します。日の出・日の入りは緯度経度から時計の上で毎日計算するので、場所と季節に合った刻がわかります。
 
-文字盤は24時間で一周する太陽の軌道です。南中が真上に来るよう毎日回り、日の出と日の入りを結ぶ地平線で空と地を塗り分けます。外周に並ぶ刻の丸は、昼側では間隔が広く夜側では狭く（冬は逆に）なり、一刻の長さがそのまま目に見えます。赤い丸が今の太陽、橙の帯が今いる刻です。
+文字盤は24時間で一周する太陽の軌道です。南中が真上に来るよう毎日回り、日の出と日の入りを結ぶ地平線で空と地を塗り分けます。外周に並ぶ刻の丸は、昼側では間隔が広く夜側では狭く（冬は逆に）なり、一刻の長さがそのまま目に見えます。赤い丸が今の太陽、橙の帯が今いる刻です。太陽の向きは見上げた空と同じで、北半球では左から昇って右へ、南半球では右から昇って左へ動きます（設定で時計回りに固定することもできます）。
 
 - 中央に干支（酉の刻）、刻の名（明け六つ・昼九つ・暮れ六つ…。刻の後半は「暮れ六つ半」）、今の時刻、今の一刻の長さ
 - 長方形の画面では、四隅に日付・曜日と、今日の昼・夜それぞれの一刻の長さ
@@ -59,7 +59,7 @@ Daytime, from dawn (Ake-mutsu) to dusk (Kure-mutsu), and night, from dusk to the
 
 Because day and night are always split into six, the length of a koku changes with the seasons. In Tokyo a daytime koku lasts about 2 h 26 min at the summer solstice and a night koku about 1 h 34 min. At the winter solstice they swap: about 1 h 37 min by day and 2 h 23 min at night. The watch calculates sunrise and sunset from your latitude and longitude every day, so the koku always match your place and season.
 
-The dial is the sun's 24-hour path. It turns each day so that solar noon sits at the top, and the horizon line drawn between sunrise and sunset divides sky from ground. The koku markers around the edge are spaced wider on the day side and closer on the night side (the other way round in winter), so you can see the length of a koku at a glance. The red disc is the sun right now, and the orange band marks the current koku.
+The dial is the sun's 24-hour path. It turns each day so that solar noon sits at the top, and the horizon line drawn between sunrise and sunset divides sky from ground. The koku markers around the edge are spaced wider on the day side and closer on the night side (the other way round in winter), so you can see the length of a koku at a glance. The red disc is the sun right now, and the orange band marks the current koku. The sun moves the way you see it in the sky: left to right (clockwise) in the Northern Hemisphere, and right to left in the Southern Hemisphere (you can keep it clockwise in the settings).
 
 - In the center: zodiac sign, koku name (with "han" for its second half), the current time, and the length of the current koku
 - On rectangular screens, the corners show the date and weekday, and today's daytime and night koku lengths

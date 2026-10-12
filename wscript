@@ -40,6 +40,12 @@ def build(ctx):
             ctx.env.append_value('DEFINES', ['DEMO_YDAY=' + parts[0], 'DEMO_MINUTE=' + parts[1]])
             if len(parts) > 2 and parts[2] == 'edo':
                 ctx.env.append_value('DEFINES', ['DEMO_EDO=1'])
+        # WADOKEI_PLACE="緯度,経度,時差" で場所を固定する（緯度経度は 1e-4 度、時差は分）
+        place = os.environ.get('WADOKEI_PLACE')
+        if place:
+            lat, lon, tz = place.split(',')
+            ctx.env.append_value('DEFINES', ['DEMO_LATITUDE=(' + lat + ')', 'DEMO_LONGITUDE=(' + lon + ')',
+                                             'DEMO_TIMEZONE=(' + tz + ')'])
         app_elf = '{}/pebble-app.elf'.format(ctx.env.BUILD_DIR)
         ctx.pbl_build(source=ctx.path.ant_glob('src/c/**/*.c'), target=app_elf, bin_type='app')
 

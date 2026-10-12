@@ -17,6 +17,11 @@ var TEXT = {
     latitude: '緯度（北緯が正）',
     longitude: '経度（東経が正）',
     placeNote: '位置情報を使わないときは、この緯度・経度で計算します。初期値は東京です。',
+    directionHeading: '太陽の向き',
+    flipSouth: '南半球では右から左へ動かす',
+    directionNote: '北半球では、南の空を見上げたときと同じく、太陽が左から昇って右へ沈む時計回りです。' +
+      'オンにすると、南半球（緯度がマイナス）では北の空と同じく右から昇って左へ沈む反時計回りになります。' +
+      'オフにすると、どこでも時計回りです。',
     save: '保存'
   },
   en: {
@@ -34,6 +39,12 @@ var TEXT = {
     latitude: 'Latitude (north is positive)',
     longitude: 'Longitude (east is positive)',
     placeNote: 'When phone location is off, these coordinates are used. The default is Tokyo.',
+    directionHeading: 'Direction of the sun',
+    flipSouth: 'Right to left in the Southern Hemisphere',
+    directionNote: 'In the Northern Hemisphere the sun rises on the left and sets on the right, ' +
+      'as it does when you face south, so the dial turns clockwise. When this is on, south of the equator ' +
+      '(negative latitude) it rises on the right and sets on the left, as it does when you face north. ' +
+      'When off, the dial always turns clockwise.',
     save: 'Save'
   }
 };
@@ -101,6 +112,22 @@ function build(lang) {
         {
           type: 'text',
           defaultValue: t.placeNote
+        }
+      ]
+    },
+    {
+      type: 'section',
+      items: [
+        { type: 'heading', defaultValue: t.directionHeading },
+        {
+          type: 'toggle',
+          messageKey: 'FLIP_SOUTH',
+          label: t.flipSouth,
+          defaultValue: true
+        },
+        {
+          type: 'text',
+          defaultValue: t.directionNote
         }
       ]
     },

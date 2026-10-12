@@ -4,6 +4,8 @@
  * 文字盤の作りは JR Mobley の Horizon Watch Face（CC BY-SA 4.0）による。
  * 24 時間で一周する太陽の軌道を、南中が真上に来るよう回し、
  * 日の出と日の入りを結ぶ線を地平線として空と地を塗り分ける。
+ * 太陽の向きは見上げた空に合わせる。北半球（南を向く）では左から昇って右へ沈む時計回り、
+ * 南半球（北を向く）では右から昇って左へ沈む反時計回り（設定でオフにすると常に時計回り）。
  * 時刻の目盛りは、昼と夜をそれぞれ六等分した不定時法の刻に置き換えている。
  */
 
@@ -19,12 +21,19 @@ typedef enum {
     PersistKeyLongitude,
     PersistKeyBasis,
     PersistKeyTimezone,
+    PersistKeyFlipSouth,
 } PersistKey;
 
 /* 位置情報が届くまでは東京で計算する（1e-4 度単位） */
 #define DEFAULT_LATITUDE  356895
 #define DEFAULT_LONGITUDE 1396917
 #define DEFAULT_TIMEZONE  540     /* 時計にタイムゾーンが無いときの時差（分） */
+
+/* スクリーンショット用に場所を固定する（wscript の WADOKEI_PLACE） */
+#ifdef DEMO_TIMEZONE
+#undef DEFAULT_TIMEZONE
+#define DEFAULT_TIMEZONE DEMO_TIMEZONE
+#endif
 
 #if PBL_DISPLAY_WIDTH == 144
 #define FONT_JP          RESOURCE_ID_JP_14
@@ -68,6 +77,7 @@ static struct {
     int32_t longitude;
     bool edo;           /* 六つを江戸の暦法（太陽の伏角 7°21′40″）で取る */
     int32_t timezone;   /* スマホから届いた時差（分） */
+    bool flipSouth;     /* 南半球では反時計回りにする */
 
     struct tm now;
     WaDay day;
@@ -125,9 +135,15 @@ static void updateDay(bool force) {
                 offset, g.edo, &g.day);
 }
 
-/* 文字盤上の角度。南中が真上で、時計回りに進む。 */
+/* 南半球では太陽が右から昇って左へ沈むので、文字盤を反時計回りにする */
+static bool southern(void) {
+    return g.flipSouth && g.latitude < 0;
+}
+
+/* 文字盤上の角度。南中が真上で、北半球では時計回り、南半球では反時計回りに進む。 */
 static int32_t orbitAngle(float minute) {
     int32_t a = (int32_t)((minute - g.day.noon) * TRIG_MAX_ANGLE / 1440.0f);
+    if (southern()) a = -a;
     a %= TRIG_MAX_ANGLE;
     if (a < 0) a += TRIG_MAX_ANGLE;
     return a;
@@ -217,7 +233,8 @@ static void drawClock(Layer* layer, GContext* ctx) {
     int16_t band = discR * 2 - 2;
     GRect bandRect = GRect(center.x - orbitR - band / 2, center.y - orbitR - band / 2,
                            orbitR * 2 + band, orbitR * 2 + band);
-    int32_t a0 = orbitAngle(koku.start);
+    /* graphics_fill_radial は時計回りに塗るので、南半球では刻の終わりから塗る */
+    int32_t a0 = orbitAngle(southern() ? koku.start + koku.length : koku.start);
     int32_t a1 = a0 + (int32_t)(koku.length * TRIG_MAX_ANGLE / 1440.0f);
     graphics_context_set_fill_color(ctx, COLOR_CURRENT);
     graphics_fill_radial(ctx, bandRect, GOvalScaleModeFitCircle, band, a0, a1);
@@ -354,6 +371,11 @@ static void messageReceived(DictionaryIterator* received, void* context) {
         persist_write_int(PersistKeyTimezone, g.timezone);
         changed = true;
     }
+    if ((t = dict_find(received, MESSAGE_KEY_FLIP_SOUTH))) {
+        g.flipSouth = t->value->int32 != 0;
+        persist_write_bool(PersistKeyFlipSouth, g.flipSouth);
+        changed = true;
+    }
     if ((t = dict_find(received, MESSAGE_KEY_BASIS))) {
         g.edo = t->value->int32 != 0;
         persist_write_bool(PersistKeyBasis, g.edo);
@@ -376,8 +398,13 @@ static void init(void) {
     g.longitude = persist_exists(PersistKeyLongitude)
         ? persist_read_int(PersistKeyLongitude) : DEFAULT_LONGITUDE;
     g.edo = persist_exists(PersistKeyBasis) && persist_read_bool(PersistKeyBasis);
+    g.flipSouth = !persist_exists(PersistKeyFlipSouth) || persist_read_bool(PersistKeyFlipSouth);
 #ifdef DEMO_EDO
     g.edo = true;
+#endif
+#ifdef DEMO_LATITUDE
+    g.latitude = DEMO_LATITUDE;
+    g.longitude = DEMO_LONGITUDE;
 #endif
     g.timezone = persist_exists(PersistKeyTimezone)
         ? persist_read_int(PersistKeyTimezone) : DEFAULT_TIMEZONE;

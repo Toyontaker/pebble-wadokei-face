@@ -30,7 +30,8 @@
       "LATITUDE",
       "LONGITUDE",
       "BASIS",
-        "TIMEZONE"
+      "TIMEZONE",
+      "FLIP_SOUTH"
     ],
     "resources": {
       "media": [
