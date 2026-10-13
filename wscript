@@ -33,13 +33,15 @@ def build(ctx):
     for platform in ctx.env.TARGET_PLATFORMS:
         ctx.env = ctx.all_envs[platform]
         ctx.set_group(ctx.env.PLATFORM_NAME)
-        # スクリーンショット用: WADOKEI_DEMO="通日,分[,edo]" で日付と時刻を固定する
+        # スクリーンショット用: WADOKEI_DEMO="通日,分[,edo][,eto][,q]" で日付と時刻を固定する
         demo = os.environ.get('WADOKEI_DEMO')
         if demo:
             parts = demo.split(',')
             ctx.env.append_value('DEFINES', ['DEMO_YDAY=' + parts[0], 'DEMO_MINUTE=' + parts[1]])
-            if len(parts) > 2 and parts[2] == 'edo':
-                ctx.env.append_value('DEFINES', ['DEMO_EDO=1'])
+            # 3 つ目以降: edo（江戸の暦法）、eto（十二支で呼ぶ）、q（四つに分ける）
+            flags = {'edo': 'DEMO_EDO=1', 'eto': 'DEMO_ZODIAC=1', 'q': 'DEMO_QUARTERS=1'}
+            for flag in parts[2:]:
+                ctx.env.append_value('DEFINES', [flags[flag]])
         # WADOKEI_PLACE="緯度,経度,時差" で場所を固定する（緯度経度は 1e-4 度、時差は分）
         place = os.environ.get('WADOKEI_PLACE')
         if place:

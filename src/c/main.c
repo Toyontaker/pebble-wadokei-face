@@ -22,6 +22,8 @@ typedef enum {
     PersistKeyBasis,
     PersistKeyTimezone,
     PersistKeyFlipSouth,
+    PersistKeyNaming,
+    PersistKeyDivision,
 } PersistKey;
 
 /* 位置情報が届くまでは東京で計算する（1e-4 度単位） */
@@ -78,6 +80,8 @@ static struct {
     bool edo;           /* 六つを江戸の暦法（太陽の伏角 7°21′40″）で取る */
     int32_t timezone;   /* スマホから届いた時差（分） */
     bool flipSouth;     /* 南半球では反時計回りにする */
+    bool zodiac;        /* 刻を十二支で呼ぶ（酉の刻）。false なら数で呼ぶ（暮れ六つ） */
+    bool quarters;      /* 刻を四つに分ける（丑三つ）。false なら二つ（半） */
 
     struct tm now;
     WaDay day;
@@ -193,9 +197,16 @@ static void formatTime(char* buf, size_t len) {
 }
 
 static void drawClock(Layer* layer, GContext* ctx) {
-    GRect bounds = layer_get_unobstructed_bounds(layer);
-    GPoint center = grect_center_point(&bounds);
+    /* 画面の下に通知（Timeline Quick View）が出ても文字盤は縮めず、上に寄せて下を隠す。
+     * 長方形の画面では隠れるのは夜側の下の丸だけ。丸い画面では中央の文字を見える範囲に詰める。 */
+    GRect bounds = layer_get_bounds(layer);
+    GRect visible = layer_get_unobstructed_bounds(layer);
+    bool obstructed = visible.size.h < bounds.size.h;
     int16_t inner = bounds.size.w < bounds.size.h ? bounds.size.w : bounds.size.h;
+    GPoint center = grect_center_point(&bounds);
+    if (obstructed) {
+        center.y = bounds.origin.y + inner / 2;
+    }
 
     int16_t R = inner / 2 - PBL_IF_ROUND_ELSE(2, 0);
     int16_t discR = R / 8;
@@ -239,17 +250,22 @@ static void drawClock(Layer* layer, GContext* ctx) {
     graphics_context_set_fill_color(ctx, COLOR_CURRENT);
     graphics_fill_radial(ctx, bandRect, GOvalScaleModeFitCircle, band, a0, a1);
 
-    /* --- 半刻の点 --- */
+    /* --- 半刻（四つに分けるときは一つ〜四つ）の点 --- */
     int16_t pipR = discR / 4 > 1 ? discR / 4 : 1;
+    int parts = g.quarters ? 4 : 2;
     for (int k = 0; k < KOKU_COUNT; ++k) {
         float a = wadokei_boundary(&g.day, k);
         float b = wadokei_boundary(&g.day, (k + 1) % KOKU_COUNT);
         if (b < a) b += 1440.0f;
-        GPoint p = orbitPoint(center, orbitR, (a + b) / 2);
         bool inCurrent = (k == koku.index);
-        graphics_context_set_fill_color(ctx,
-            (inCurrent || p.y < horizonY) ? COLOR_SKY_INK : COLOR_GROUND_INK);
-        graphics_fill_circle(ctx, p, pipR);
+        for (int i = 1; i < parts; ++i) {
+            GPoint p = orbitPoint(center, orbitR, a + (b - a) * i / parts);
+            graphics_context_set_fill_color(ctx,
+                (inCurrent || p.y < horizonY) ? COLOR_SKY_INK : COLOR_GROUND_INK);
+            /* 四つに分けるときは、真ん中（半）の点を他より大きくする */
+            int16_t r = (parts == 4 && i != 2) ? (pipR > 1 ? pipR - 1 : 1) : pipR;
+            graphics_fill_circle(ctx, p, r);
+        }
     }
 
     /* --- 刻の境目（数字の入った丸） --- */
@@ -266,7 +282,7 @@ static void drawClock(Layer* layer, GContext* ctx) {
             graphics_context_set_stroke_color(ctx, GColorBlack);
             graphics_draw_circle(ctx, p, discR);
         }
-        drawCentered(ctx, wadokei_numeral(k), g.jp, p, ink);
+        drawCentered(ctx, g.zodiac ? wadokei_eto(k) : wadokei_numeral(k), g.jp, p, ink);
     }
 
     /* --- 太陽 --- */
@@ -291,30 +307,70 @@ static void drawClock(Layer* layer, GContext* ctx) {
 
     char buf[32];
 
-    /* 干支 */
-    snprintf(buf, sizeof(buf), "%sの刻", wadokei_eto(koku.index));
-    drawCentered(ctx, buf, g.jp, GPoint(center.x, center.y - readoutR * 56 / 100), COLOR_ETO);
+    /* 刻の名。大きく出す呼び方と、上に小さく添えるもう一方の呼び方 */
+    char sub[32];
+    const char* eto = wadokei_eto(koku.index);
+    if (g.zodiac) {
+        if (g.quarters) {
+            snprintf(buf, sizeof(buf), "%s%s", eto, wadokei_quarter(koku.quarter));
+        } else {
+            snprintf(buf, sizeof(buf), "%sの刻%s", eto, koku.half ? "半" : "");
+        }
+        snprintf(sub, sizeof(sub), "%s%s", wadokei_name(koku.index), koku.half ? "半" : "");
+    } else {
+        snprintf(buf, sizeof(buf), "%s%s", wadokei_name(koku.index), koku.half ? "半" : "");
+        if (g.quarters) {
+            snprintf(sub, sizeof(sub), "%s%s", eto, wadokei_quarter(koku.quarter));
+        } else {
+            snprintf(sub, sizeof(sub), "%sの刻", eto);
+        }
+    }
+    /* 中央の四行の位置（読み取り円の半径に対する割合）。
+     * 通知で下が隠れる丸い画面では、上の行を少し上げ、下の行を見える範囲に収めて詰める。 */
+    int16_t rowTop = center.y - readoutR * 56 / 100;
+    int16_t rowBottom = center.y + readoutR * 61 / 100;
+    bool squeezed = false;
+#if defined(PBL_ROUND)
+    if (obstructed) {
+        int16_t lineH = graphics_text_layout_get_content_size(
+            "一", g.jp, GRect(0, 0, 100, 100), GTextOverflowModeFill, GTextAlignmentLeft).h;
+        int16_t limit = visible.origin.y + visible.size.h - lineH * 3 / 4;
+        if (rowBottom > limit) {
+            rowTop = center.y - readoutR * 80 / 100;
+            rowBottom = limit;
+            squeezed = true;
+        }
+    }
+#endif
+    int16_t rowSpan = rowBottom - rowTop;
+    /* 元の配置 -56%, -14%, +30%, +61% を rowTop〜rowBottom に割り付ける */
+    int16_t yName = rowTop + rowSpan * 42 / 117;
+    int16_t yTime = rowTop + rowSpan * 86 / 117;
 
-    /* 刻の名 */
-    snprintf(buf, sizeof(buf), "%s%s", wadokei_name(koku.index), koku.half ? "半" : "");
+    drawCentered(ctx, sub, g.jp, GPoint(center.x, rowTop), COLOR_ETO);
+
     GFont nameFont = g.brush;
     GSize nameSize = graphics_text_layout_get_content_size(
         buf, nameFont, GRect(0, 0, 300, 60), GTextOverflowModeWordWrap, GTextAlignmentLeft);
-    if (nameSize.w > readoutR * 2 - 6) {
+    if (nameSize.w > readoutR * 2 - 6 || squeezed) {
         nameFont = g.brushSmall;
     }
-    drawCentered(ctx, buf, nameFont, GPoint(center.x, center.y - readoutR * 14 / 100), GColorBlack);
+    drawCentered(ctx, buf, nameFont, GPoint(center.x, yName), GColorBlack);
 
     /* 現代の時刻 */
     formatTime(buf, sizeof(buf));
-    drawCentered(ctx, buf, g.timeFont, GPoint(center.x, center.y + readoutR * 30 / 100), GColorBlack);
+    drawCentered(ctx, buf, g.timeFont, GPoint(center.x, yTime), GColorBlack);
 
     /* 一刻の長さ */
     snprintf(buf, sizeof(buf), "一刻%d分", (int)(koku.length + 0.5f));
-    drawCentered(ctx, buf, g.jp, GPoint(center.x, center.y + readoutR * 61 / 100), COLOR_SUBTEXT);
+    drawCentered(ctx, buf, g.jp, GPoint(center.x, rowBottom), COLOR_SUBTEXT);
 
 #if !defined(PBL_ROUND)
-    /* --- 四隅：日付と、昼・夜それぞれの一刻 --- */
+    /* --- 四隅：日付と、昼・夜それぞれの一刻 ---
+     * 画面の下に通知（Timeline Quick View）が出ているときは、文字盤とかぶるので出さない。 */
+    if (obstructed) {
+        return;
+    }
     int16_t lineH = graphics_text_layout_get_content_size(
         "昼", g.jp, GRect(0, 0, 100, 100), GTextOverflowModeFill, GTextAlignmentLeft).h + 4;
     int16_t pad = 3;
@@ -352,6 +408,15 @@ static void timeChanged(struct tm* tickTime, TimeUnits unitsChanged) {
     layer_mark_dirty(g.layer);
 }
 
+/* 通知の出入りで表示域が変わる間も描き直す */
+static void unobstructedChanged(AnimationProgress progress, void* context) {
+    layer_mark_dirty(g.layer);
+}
+
+static void unobstructedDidChange(void* context) {
+    layer_mark_dirty(g.layer);
+}
+
 static void messageReceived(DictionaryIterator* received, void* context) {
     bool changed = false;
     Tuple* t;
@@ -374,6 +439,16 @@ static void messageReceived(DictionaryIterator* received, void* context) {
     if ((t = dict_find(received, MESSAGE_KEY_FLIP_SOUTH))) {
         g.flipSouth = t->value->int32 != 0;
         persist_write_bool(PersistKeyFlipSouth, g.flipSouth);
+        changed = true;
+    }
+    if ((t = dict_find(received, MESSAGE_KEY_NAMING))) {
+        g.zodiac = t->value->int32 != 0;
+        persist_write_bool(PersistKeyNaming, g.zodiac);
+        changed = true;
+    }
+    if ((t = dict_find(received, MESSAGE_KEY_DIVISION))) {
+        g.quarters = t->value->int32 != 0;
+        persist_write_bool(PersistKeyDivision, g.quarters);
         changed = true;
     }
     if ((t = dict_find(received, MESSAGE_KEY_BASIS))) {
@@ -399,8 +474,16 @@ static void init(void) {
         ? persist_read_int(PersistKeyLongitude) : DEFAULT_LONGITUDE;
     g.edo = persist_exists(PersistKeyBasis) && persist_read_bool(PersistKeyBasis);
     g.flipSouth = !persist_exists(PersistKeyFlipSouth) || persist_read_bool(PersistKeyFlipSouth);
+    g.zodiac = persist_exists(PersistKeyNaming) && persist_read_bool(PersistKeyNaming);
+    g.quarters = persist_exists(PersistKeyDivision) && persist_read_bool(PersistKeyDivision);
 #ifdef DEMO_EDO
     g.edo = true;
+#endif
+#ifdef DEMO_ZODIAC
+    g.zodiac = true;
+#endif
+#ifdef DEMO_QUARTERS
+    g.quarters = true;
 #endif
 #ifdef DEMO_LATITUDE
     g.latitude = DEMO_LATITUDE;
@@ -431,10 +514,15 @@ static void init(void) {
     app_message_open(128, 64);
 
     tick_timer_service_subscribe(MINUTE_UNIT, timeChanged);
+    unobstructed_area_service_subscribe((UnobstructedAreaHandlers) {
+        .change = unobstructedChanged,
+        .did_change = unobstructedDidChange,
+    }, NULL);
 }
 
 static void deinit(void) {
     tick_timer_service_unsubscribe();
+    unobstructed_area_service_unsubscribe();
     layer_destroy(g.layer);
     window_destroy(g.window);
     fonts_unload_custom_font(g.jp);

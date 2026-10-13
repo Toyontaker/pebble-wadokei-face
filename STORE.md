@@ -27,8 +27,9 @@ A Japanese temporal-hour watchface: day and night are each split into six, so th
 
 文字盤は24時間で一周する太陽の軌道です。南中が真上に来るよう毎日回り、日の出と日の入りを結ぶ地平線で空と地を塗り分けます。外周に並ぶ刻の丸は、昼側では間隔が広く夜側では狭く（冬は逆に）なり、一刻の長さがそのまま目に見えます。赤い丸が今の太陽、橙の帯が今いる刻です。太陽の向きは見上げた空と同じで、北半球では左から昇って右へ、南半球では右から昇って左へ動きます（設定で時計回りに固定することもできます）。
 
-- 中央に干支（酉の刻）、刻の名（明け六つ・昼九つ・暮れ六つ…。刻の後半は「暮れ六つ半」）、今の時刻、今の一刻の長さ
+- 中央に刻の名（明け六つ・昼九つ・暮れ六つ…。刻の後半は「暮れ六つ半」）と、もう一方の呼び方（酉の刻）、今の時刻、今の一刻の長さ
 - 長方形の画面では、四隅に日付・曜日と、今日の昼・夜それぞれの一刻の長さ
+- 刻の呼び方は「数（明け六つ・暮れ六つ）」と「十二支（卯の刻・酉の刻）」から、分け方は「二つ（暮れ六つ半）」と「四つ（丑三つ）」から選べます
 - 昼と夜の境目は「日の出・日の入り」と、江戸の寛政暦にならった「太陽が地平線下 7°21′40″（日の出の約36分前・日の入りの約36分後）」から選べます
 - 場所はスマホの位置情報か、手動で入力した緯度・経度。位置を一度受け取れば時計に保存され、スマホと離れていても毎日計算し直します
 
@@ -63,6 +64,7 @@ The dial is the sun's 24-hour path. It turns each day so that solar noon sits at
 
 - In the center: zodiac sign, koku name (with "han" for its second half), the current time, and the length of the current koku
 - On rectangular screens, the corners show the date and weekday, and today's daytime and night koku lengths
+- Name each koku by number (Ake-mutsu, Kure-mutsu) or by zodiac sign (Hour of the Rabbit, Hour of the Rooster), and divide it into halves (Kure-mutsu-han) or quarters (Ushi-mitsu)
 - Day and night can begin at sunrise and sunset, or follow the Edo-period Kansei calendar rule: the sun 7°21′40″ below the horizon (about 36 minutes before sunrise and after sunset)
 - Location comes from your phone or from coordinates you enter. Once received, it is stored on the watch, which recalculates every day even when your phone is away
 

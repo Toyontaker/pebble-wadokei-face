@@ -9,6 +9,7 @@
 typedef struct {
     int8_t index;     /* 0..11 */
     bool half;        /* 刻の後半（「〜半」） */
+    int8_t quarter;   /* 刻を四つに分けたうちの何番目か（0..3、「一つ」〜「四つ」） */
     float start;      /* この刻の始まり（今日の 0:00 からの分） */
     float length;     /* 一刻の長さ（分） */
     float day_length; /* 昼の一刻 */
@@ -38,3 +39,4 @@ float wadokei_boundary(const WaDay* day, int index);
 const char* wadokei_name(int index);   /* 明け六つ など */
 const char* wadokei_eto(int index);    /* 卯 など */
 const char* wadokei_numeral(int index); /* 六 など */
+const char* wadokei_quarter(int quarter); /* 一つ〜四つ（丑三つ の「三つ」） */

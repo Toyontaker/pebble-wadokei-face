@@ -31,7 +31,9 @@
       "LONGITUDE",
       "BASIS",
       "TIMEZONE",
-      "FLIP_SOUTH"
+      "FLIP_SOUTH",
+      "NAMING",
+      "DIVISION"
     ],
     "resources": {
       "media": [
@@ -45,7 +47,7 @@
           "type": "font",
           "name": "JP_14",
           "file": "fonts/BIZUDPGothic-Regular.ttf",
-          "characterRegex": "[0-9:/ 一四五六七八九子丑寅卯辰巳午未申酉戌亥の刻分半昼夜月火水木金土日曜]",
+          "characterRegex": "[0-9:/ 一二三四五六七八九子丑寅卯辰巳午未申酉戌亥の刻分半昼夜月火水木金土日曜明け暮れつ朝夕宵暁]",
           "targetPlatforms": [
             "basalt",
             "diorite",
@@ -56,7 +58,7 @@
           "type": "font",
           "name": "BRUSH_24",
           "file": "fonts/brush-kaisho.ttf",
-          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半]",
+          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半一二三子丑寅卯辰巳午未申酉戌亥の刻]",
           "targetPlatforms": [
             "basalt",
             "diorite",
@@ -67,7 +69,7 @@
           "type": "font",
           "name": "BRUSH_18",
           "file": "fonts/brush-kaisho.ttf",
-          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半]",
+          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半一二三子丑寅卯辰巳午未申酉戌亥の刻]",
           "targetPlatforms": [
             "basalt",
             "diorite",
@@ -78,7 +80,7 @@
           "type": "font",
           "name": "JP_16",
           "file": "fonts/BIZUDPGothic-Regular.ttf",
-          "characterRegex": "[0-9:/ 一四五六七八九子丑寅卯辰巳午未申酉戌亥の刻分半昼夜月火水木金土日曜]",
+          "characterRegex": "[0-9:/ 一二三四五六七八九子丑寅卯辰巳午未申酉戌亥の刻分半昼夜月火水木金土日曜明け暮れつ朝夕宵暁]",
           "targetPlatforms": [
             "chalk"
           ]
@@ -87,7 +89,7 @@
           "type": "font",
           "name": "BRUSH_28",
           "file": "fonts/brush-kaisho.ttf",
-          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半]",
+          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半一二三子丑寅卯辰巳午未申酉戌亥の刻]",
           "targetPlatforms": [
             "chalk"
           ]
@@ -96,7 +98,7 @@
           "type": "font",
           "name": "BRUSH_22",
           "file": "fonts/brush-kaisho.ttf",
-          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半]",
+          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半一二三子丑寅卯辰巳午未申酉戌亥の刻]",
           "targetPlatforms": [
             "chalk"
           ]
@@ -105,7 +107,7 @@
           "type": "font",
           "name": "JP_18",
           "file": "fonts/BIZUDPGothic-Regular.ttf",
-          "characterRegex": "[0-9:/ 一四五六七八九子丑寅卯辰巳午未申酉戌亥の刻分半昼夜月火水木金土日曜]",
+          "characterRegex": "[0-9:/ 一二三四五六七八九子丑寅卯辰巳午未申酉戌亥の刻分半昼夜月火水木金土日曜明け暮れつ朝夕宵暁]",
           "targetPlatforms": [
             "emery"
           ]
@@ -114,7 +116,7 @@
           "type": "font",
           "name": "BRUSH_32",
           "file": "fonts/brush-kaisho.ttf",
-          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半]",
+          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半一二三子丑寅卯辰巳午未申酉戌亥の刻]",
           "targetPlatforms": [
             "emery"
           ]
@@ -123,7 +125,7 @@
           "type": "font",
           "name": "BRUSH_26",
           "file": "fonts/brush-kaisho.ttf",
-          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半]",
+          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半一二三子丑寅卯辰巳午未申酉戌亥の刻]",
           "targetPlatforms": [
             "emery"
           ]
@@ -132,7 +134,7 @@
           "type": "font",
           "name": "JP_22",
           "file": "fonts/BIZUDPGothic-Regular.ttf",
-          "characterRegex": "[0-9:/ 一四五六七八九子丑寅卯辰巳午未申酉戌亥の刻分半昼夜月火水木金土日曜]",
+          "characterRegex": "[0-9:/ 一二三四五六七八九子丑寅卯辰巳午未申酉戌亥の刻分半昼夜月火水木金土日曜明け暮れつ朝夕宵暁]",
           "targetPlatforms": [
             "gabbro"
           ]
@@ -141,7 +143,7 @@
           "type": "font",
           "name": "BRUSH_40",
           "file": "fonts/brush-kaisho.ttf",
-          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半]",
+          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半一二三子丑寅卯辰巳午未申酉戌亥の刻]",
           "targetPlatforms": [
             "gabbro"
           ]
@@ -150,7 +152,7 @@
           "type": "font",
           "name": "BRUSH_30",
           "file": "fonts/brush-kaisho.ttf",
-          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半]",
+          "characterRegex": "[明け暮れ六五四九八七つ朝昼夕宵夜暁半一二三子丑寅卯辰巳午未申酉戌亥の刻]",
           "targetPlatforms": [
             "gabbro"
           ]

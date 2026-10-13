@@ -6,6 +6,16 @@ var TEXT = {
     title: '和時計',
     intro: '昼（明け六つ〜暮れ六つ）と夜をそれぞれ六等分する不定時法の時計です。' +
       '一刻の長さは季節と場所で毎日変わります。',
+    namesHeading: '刻の呼び方',
+    namingLabel: '大きく出す名前',
+    namingNumber: '数で呼ぶ（明け六つ・昼九つ・暮れ六つ）',
+    namingZodiac: '十二支で呼ぶ（卯の刻・午の刻・酉の刻）',
+    divisionLabel: '刻の分け方',
+    divisionHalf: '二つに分ける（暮れ六つ半）',
+    divisionQuarter: '四つに分ける（丑三つ）',
+    namesNote: '選ばなかったほうの呼び方は、刻の名の上に小さく出します。' +
+      '四つに分けると、一刻を「一つ」〜「四つ」に分けて「丑三つ」のように数えます。' +
+      '外周の丸の字も、数か十二支かに合わせて変わります。',
     basisHeading: '明け六つ・暮れ六つ',
     basisLabel: '昼と夜の境目',
     basisSun: '日の出・日の入り',
@@ -28,6 +38,16 @@ var TEXT = {
     title: 'Wadokei',
     intro: 'A Japanese temporal-hour clock: daytime (dawn to dusk) and night are each ' +
       'divided into six "koku". The length of a koku changes every day with the season and your location.',
+    namesHeading: 'Names of the koku',
+    namingLabel: 'Main name',
+    namingNumber: 'By number (Ake-mutsu, Hiru-kokonotsu, Kure-mutsu)',
+    namingZodiac: 'By zodiac sign (Hour of the Rabbit, Horse, Rooster)',
+    divisionLabel: 'Divide each koku into',
+    divisionHalf: 'Halves (Kure-mutsu-han)',
+    divisionQuarter: 'Quarters (Ushi-mitsu, "third quarter of the Ox")',
+    namesNote: 'The other naming is shown in small type above the main name. ' +
+      'With quarters, each koku is counted from hitotsu to yotsu (1 to 4), as in Ushi-mitsu. ' +
+      'The markers around the dial show numbers or zodiac signs to match.',
     basisHeading: 'Dawn and dusk (Ake-mutsu / Kure-mutsu)',
     basisLabel: 'Boundary between day and night',
     basisSun: 'Sunrise and sunset',
@@ -64,6 +84,36 @@ function build(lang) {
     {
       type: 'text',
       defaultValue: t.intro
+    },
+    {
+      type: 'section',
+      items: [
+        { type: 'heading', defaultValue: t.namesHeading },
+        {
+          type: 'radiogroup',
+          messageKey: 'NAMING',
+          label: t.namingLabel,
+          defaultValue: '0',
+          options: [
+            { label: t.namingNumber, value: '0' },
+            { label: t.namingZodiac, value: '1' }
+          ]
+        },
+        {
+          type: 'radiogroup',
+          messageKey: 'DIVISION',
+          label: t.divisionLabel,
+          defaultValue: '0',
+          options: [
+            { label: t.divisionHalf, value: '0' },
+            { label: t.divisionQuarter, value: '1' }
+          ]
+        },
+        {
+          type: 'text',
+          defaultValue: t.namesNote
+        }
+      ]
     },
     {
       type: 'section',

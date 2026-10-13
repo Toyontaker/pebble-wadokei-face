@@ -25,6 +25,10 @@ const char* wadokei_name(int index) { return kNames[index % KOKU_COUNT]; }
 const char* wadokei_eto(int index) { return kEto[index % KOKU_COUNT]; }
 const char* wadokei_numeral(int index) { return kNumerals[index % KOKU_COUNT]; }
 
+static const char* const kQuarters[4] = { "一つ", "二つ", "三つ", "四つ" };
+
+const char* wadokei_quarter(int quarter) { return kQuarters[quarter & 3]; }
+
 /* 白夜・極夜で昼か夜が消えると割り算できないので、一刻を最低 1 分は残す。 */
 static void clamp_span(float* a, float* b) {
     if (*b - *a < 6.0f) {
@@ -104,6 +108,8 @@ void wadokei_koku(const WaDay* day, float now, Koku* out) {
     out->start = start + len * k;
     out->length = len;
     out->half = (now - out->start) >= len / 2;
+    int q = (int)((now - out->start) * 4 / len);
+    out->quarter = q < 0 ? 0 : q > 3 ? 3 : q;
     out->day_length = (day->kure - day->ake) / 6.0f;
     out->night_length = base == 6 ? len : (day->ake_next - day->kure) / 6.0f;
 }

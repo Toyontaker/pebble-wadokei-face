@@ -9,6 +9,8 @@ function loadSettings() {
   return {
     edo: String(s.BASIS) === '1',
     flipSouth: s.FLIP_SOUTH !== false,
+    zodiac: String(s.NAMING) === '1',
+    quarters: String(s.DIVISION) === '1',
     auto: s.CFG_AUTO_LOCATION !== false,
     latitude: parseFloat(s.CFG_LATITUDE),
     longitude: parseFloat(s.CFG_LONGITUDE)
@@ -25,6 +27,8 @@ function sendPosition(latitude, longitude, s) {
   var message = {
     'BASIS': s.edo ? 1 : 0,
     'FLIP_SOUTH': s.flipSouth ? 1 : 0,
+    'NAMING': s.zodiac ? 1 : 0,
+    'DIVISION': s.quarters ? 1 : 0,
     'TIMEZONE': -new Date().getTimezoneOffset()
   };
   if (isFinite(latitude) && isFinite(longitude) &&
